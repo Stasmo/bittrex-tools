@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('bittrex-tools-new:server');
-var http = require('http');
+const app = require('../app');
+const debug = require('debug')('bittrex-tools-new:server');
+const http = require('http');
+const https = require('https');
 
 /**
  * Get port from environment and store in Express.
@@ -16,23 +17,15 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
- * Create HTTP server.
- */
-
-
-/**
  * Listen on provided port, on all network interfaces.
  */
 
-if (process.env.USE_LETSENCRYPT == 'true') {
-  require('letsencrypt-express').create({
-      server: 'https://acme-v01.api.letsencrypt.org/directory'
-    , email: 'simon@staszkiewicz.ca'
-    , agreeTos: true
-    , approveDomains: [ 'stasmo.wtf' ]
-  });
-  app.set('port', 80);
-  var server = http.createServer(app);
+if (process.env.SSL == 'true') {
+  const options = {
+    cert: fs.readFileSync('../certs/fullchain.pem'),
+    key: fs.readFileSync('../certs/privkey.pem')
+  };
+  var server = https.createServer(app);
   server.listen(80, 443);
 } else {
   var server = http.createServer(app);

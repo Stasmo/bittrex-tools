@@ -12,7 +12,16 @@
           64643339396531393632313731323837373736356166303636346535393939636166306231653230
           3761636434366632310a613463363236336465323130666636393236393433636637363138333664
           3736
+    certbot_install_from_source: yes
+  roles:
+    - role: geerlingguy.certbot
+      become: yes
   tasks:
+    - docker_container:
+        name: server
+        state: absent
+    - shell: letsencrypt certonly --agree-tos --email simon@staszkiewicz.ca --noninteractive --standalone -d stasmo.wtf
+      become: yes
     - docker_container:
         restart_policy: always
         image: mongo
@@ -24,9 +33,13 @@
         restart_policy: always
         image: stasmo/bittrex-tools
         name: server
+        volumes:
+          - /etc/letsencrypt/live/stasmo.wtf:/certs
         ports:
-          - "{{ app_port }}:{{ app_port }}"
+          - "80:80"
+          - "443:443"
         env:
           DATABASE_STRING: 'mongodb://bittrex_mongo/bittrex_tools'
           PORT: "{{ app_port }}"
+          SSL: 'true'
         command: npm start
