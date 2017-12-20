@@ -25,7 +25,7 @@ if (process.env.SSL == 'true') {
     cert: fs.readFileSync('../certs/fullchain.pem'),
     key: fs.readFileSync('../certs/privkey.pem')
   };
-  var server = https.createServer(app);
+  var server = https.createServer(options, app);
   server.listen(80, 443);
 } else {
   var server = http.createServer(app);
