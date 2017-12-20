@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title= title
+    title Bittrex Tools - #{title}
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css', rel='stylesheet', media='screen')
     link(rel='stylesheet', href='/stylesheets/style.css')
@@ -11,10 +11,8 @@ html
       button.navbar-toggler(type='button', data-toggle='collapse', data-target='#collapseMe', aria-controls='collapseMe', aria-expanded='false', aria-label='Toggle navigation')
         span.navbar-toggler-icon
       #collapseMe.collapse.navbar-collapse.d-flex.flex-row-reverse
-        ul.navbar-nav.mr-auto
+        ul.navbar-nav
           if user
-            li.nav-item
-              a.btn.btn-primary(href='/alerts/new') Create Alert
             li.nav-item.dropdown
               a#navbarDropdown.nav-link.dropdown-toggle(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
                 | #{ user.username }
@@ -25,16 +23,17 @@ html
           else
               li.nav-item
                 a.nav-link(href='/login') Login
-          if lastChecked
               li.nav-item
-                p #{lastChecked}
-
+                a.nav-link(href='/register') Register
 
     if (error && error.length > 0)
       br
       h4.error-msg= error
       br
     block content
+  nav.navbar.fixed-bottom.navbar-light.bg-faded
+    if lastChecked
+      span.navbar-text Bittrex last checked at #{lastChecked}
 
   script(src='https://code.jquery.com/jquery-3.2.1.min.js')
   script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js')

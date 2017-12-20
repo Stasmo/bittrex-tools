@@ -7,7 +7,7 @@ var Account = new Schema({
     username: String,
     password: String,
     bittrexKey: String,
-    bittrexSecrey: String,
+    bittrexSecret: String,
     email: String,
     pushoverUser: String,
     pushoverToken: String,
