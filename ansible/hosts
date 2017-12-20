@@ -1,0 +1,2 @@
+[targets]
+stasmo.wtf ansible_user=ubuntu

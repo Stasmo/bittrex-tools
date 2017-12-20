@@ -1,6 +1,6 @@
 # Ansible playbook
-- name: Set up the postgres container
-  hosts: stasmo.wtf
+- name: Set up the containers
+  hosts: localhost
   vars:
     app_port: 80
     mongo_db: bittrextoolsdb
@@ -14,11 +14,14 @@
           3736
   tasks:
     - docker_container:
+        restart_policy: always
         image: mongo
         name: bittrex_mongo
         volumes:
           - "{{ ansible_user_dir}}/mongodata:/data/db"
     - docker_container:
+        pull: true
+        restart_policy: always
         image: stasmo/bittrex-tools
         name: server
         ports:

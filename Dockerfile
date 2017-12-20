@@ -6,4 +6,4 @@ RUN npm i
 
 ADD . .
 
-CMD node app.js
+CMD npm start
