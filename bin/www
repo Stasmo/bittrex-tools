@@ -19,13 +19,26 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+if (process.env.USE_LETSENCRYPT == 'true') {
+  require('letsencrypt-express').create({
+      server: 'https://acme-v01.api.letsencrypt.org/directory'
+    , email: 'simon@staszkiewicz.ca'
+    , agreeTos: true
+    , approveDomains: [ 'stasmo.wtf' ]
+  });
+  app.set('port', 80);
+  var server = http.createServer(app);
+  server.listen(80, 443);
+} else {
+  var server = http.createServer(app);
+  server.listen(port);
+}
+
 server.on('error', onError);
 server.on('listening', onListening);
 

@@ -1,6 +1,6 @@
 # Ansible playbook
 - name: Set up the containers
-  hosts: localhost
+  hosts: stasmo.wtf
   vars:
     app_port: 80
     mongo_db: bittrextoolsdb
@@ -29,3 +29,4 @@
         env:
           DATABASE_STRING: 'mongodb://bittrex_mongo/bittrex_tools'
           PORT: "{{ app_port }}"
+        command: npm start
