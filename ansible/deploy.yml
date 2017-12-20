@@ -29,12 +29,11 @@
         volumes:
           - "{{ ansible_user_dir}}/mongodata:/data/db"
     - docker_container:
-        pull: true
         restart_policy: always
         image: stasmo/bittrex-tools
         name: server
         volumes:
-          - /etc/letsencrypt/live/stasmo.wtf:/certs
+          - /etc/letsencrypt:/certs
         ports:
           - "80:80"
           - "443:443"
@@ -42,4 +41,5 @@
           DATABASE_STRING: 'mongodb://bittrex_mongo/bittrex_tools'
           PORT: "{{ app_port }}"
           SSL: 'true'
+          CERTS_DIR: /certs/live/stasmo.wtf
         command: npm start

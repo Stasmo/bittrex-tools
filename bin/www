@@ -23,8 +23,8 @@ app.set('port', port);
 
 if (process.env.SSL == 'true') {
   const options = {
-    cert: fs.readFileSync('../certs/fullchain.pem'),
-    key: fs.readFileSync('../certs/privkey.pem')
+    cert: fs.readFileSync(process.env.CERTS_DIR + 'fullchain.pem'),
+    key: fs.readFileSync(process.env.CERTS_DIR + 'privkey.pem')
   };
   var server = https.createServer(options, app);
   server.listen(80, 443);
