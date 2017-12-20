@@ -10,10 +10,7 @@ router.get('/', async function (req, res) {
     if(req.isAuthenticated()){
         const alerts = Alert.find({user: req.user._id}).exec();
         const triggered = TriggeredAlert.find({user: req.user._id}).exec();
-        console.log(alerts);
-        console.log(triggered);
-        const finalResult = await Promise.all([alerts, triggered])
-        console.log(finalResult)
+        const finalResult = await Promise.all([alerts, triggered]);
         res.render('alerts', { user: req.user, alerts: finalResult[0], triggeredAlerts: finalResult[1] });
     }
     else

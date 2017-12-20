@@ -131,7 +131,7 @@ app.getMarketTicker = function(marketName, callback) {
 }
 
 bittrex.getmarketsummaries((data,err) => {
-    console.log('Getting market names');
+    console.log(Date() + ' - Getting market names');
     app.set('marketNames', data.result.map((a) => a.MarketName ));
 });
 

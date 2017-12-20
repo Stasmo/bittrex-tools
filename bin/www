@@ -14,8 +14,6 @@ const fs = require('fs');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -26,9 +24,13 @@ if (process.env.SSL == 'true') {
     cert: fs.readFileSync(process.env.CERTS_DIR + 'fullchain.pem'),
     key: fs.readFileSync(process.env.CERTS_DIR + 'privkey.pem')
   };
+  app.set('port', 80);
+  app.listen(80);
   var server = https.createServer(options, app);
-  server.listen(80, 443);
+  server.listen(443);
 } else {
+  var port = normalizePort(process.env.PORT || '3000');
+  app.set('port', port);
   var server = http.createServer(app);
   server.listen(port);
 }
@@ -94,4 +96,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }
