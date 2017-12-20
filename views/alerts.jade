@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  h1 Alerts
+  hr
+  .row
+    .col-md
+      h2 Open Alerts
+      if alerts
+        ul.list-group
+          for alert in alerts
+            .card(style='width: 20rem;')
+              .card-body
+                h4.card-title #{ alert.name }
+                h6.card-subtitle.mb-2.text-muted Currency: #{ alert.currencyName }
+                p.card-text
+                  | Threshold: #{alert.thresholdType} #{ alert.threshold }
+                form(method='post' action='/alerts/delete')
+                  input(type='hidden' value='#{alert.id}' name='id')
+                  input.btn.btn-danger(type='submit' value='Delete')
+      else
+        p No triggered alerts
+    .col-md
+      h2 Triggered Alerts
+      if triggeredAlerts
+        for alert in triggeredAlerts
+          .card(style='width: 20rem;')
+            .card-body
+              h4.card-title #{ alert.name }
+              h6.card-subtitle.mb-2.text-muted Currency: #{ alert.currencyName }
+              p.card-text
+                | Threshold: #{ alert.threshold } triggered on #{ alert.triggeredOn }
+      else
+        p No triggered alerts

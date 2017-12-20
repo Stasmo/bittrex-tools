@@ -1,0 +1,28 @@
+{
+  "name": "bittrex-tools-new",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "test": "make test"
+  },
+  "dependencies": {
+    "body-parser": "~1.18.2",
+    "chai": "^4.1.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "express-session": "^1.15.6",
+    "jade": "~1.11.0",
+    "mocha": "^4.0.1",
+    "mongoose": "^4.13.7",
+    "morgan": "~1.9.0",
+    "node-bittrex-api": "^0.8.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.4.0",
+    "serve-favicon": "~2.4.5",
+    "should": "^13.1.3"
+  }
+}

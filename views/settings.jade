@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  h1 Settings
+  form(method='post' action='/settings')
+    .form-group
+      label(for='bittrexKey') Bittrex API Key
+      input#bittrexKey.form-control(type='text', placeholder='Bittrex API Key', name='bittrexKey', value=user.bittrexKey)
+      small#emailHelp.form-text.text-muted This should have READ access ONLY.
+    .form-group
+      label(for='bittrexSecret') Bittrex API Secret
+      input#bittrexSecret.form-control(type='password', placeholder='Bittrex API Secret', name='bittrexSecret', value='')
+      small#emailHelp.form-text.text-muted This should have READ access ONLY.
+    .form-group
+      label(for='email') Email address
+      input#email.form-control(type='email', placeholder='Email address', name='email', value=user.email)
+    .form-group
+      label(for='pushoverUser') Pushover user
+      input#pushoverUser.form-control(type='text', placeholder='Pushover user', name='pushoverUser', value=user.pushoverUser)
+    .form-group
+      label(for='pushoverToken') Pushover token
+      input#pushoverToken.form-control(type='password', placeholder='Pushover token', name='pushoverToken', value='')
+
+    input.btn.btn-primary(type='submit')

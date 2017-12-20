@@ -1,0 +1,28 @@
+# Ansible playbook
+- name: Set up the postgres container
+  hosts: stasmo.wtf
+  vars:
+    app_port: 80
+    mongo_db: bittrextoolsdb
+    mongo_user: stasmo
+    mongo_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          38633866386333383035363731343362336662643233323138383735383136313761373131396330
+          3036656132356539373238316637663532613266663936640a306265613336316363616634613339
+          64643339396531393632313731323837373736356166303636346535393939636166306231653230
+          3761636434366632310a613463363236336465323130666636393236393433636637363138333664
+          3736
+  tasks:
+    - docker_container:
+        image: mongo
+        name: bittrex_mongo
+        volumes:
+          - "{{ ansible_user_dir}}/mongodata:/data/db"
+    - docker_container:
+        image: stasmo/bittrex-tools
+        name: server
+        ports:
+          - "{{ app_port }}:{{ app_port }}"
+        env:
+          DATABASE_STRING: 'mongodb://bittrex_mongo/bittrex_tools'
+          PORT: "{{ app_port }}"

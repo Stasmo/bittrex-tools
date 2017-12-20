@@ -1,0 +1,42 @@
+doctype html
+html
+  head
+    title= title
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css', rel='stylesheet', media='screen')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    nav.navbar.navbar-expand-sm.navbar-dark.bg-dark.fixed-top
+      a.navbar-brand(href='/') Bittrex Tools
+      button.navbar-toggler(type='button', data-toggle='collapse', data-target='#collapseMe', aria-controls='collapseMe', aria-expanded='false', aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #collapseMe.collapse.navbar-collapse.d-flex.flex-row-reverse
+        ul.navbar-nav.mr-auto
+          if user
+            li.nav-item
+              a.btn.btn-primary(href='/alerts/new') Create Alert
+            li.nav-item.dropdown
+              a#navbarDropdown.nav-link.dropdown-toggle(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                | #{ user.username }
+              .dropdown-menu(aria-labelledby='navbarDropdown')
+                a.dropdown-item(href='/settings') Settings
+                a.dropdown-item(href='/logout') Logout
+
+          else
+              li.nav-item
+                a.nav-link(href='/login') Login
+          if lastChecked
+              li.nav-item
+                p #{lastChecked}
+
+
+    if (error && error.length > 0)
+      br
+      h4.error-msg= error
+      br
+    block content
+
+  script(src='https://code.jquery.com/jquery-3.2.1.min.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js')
+  script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js')
+  block javascripts
