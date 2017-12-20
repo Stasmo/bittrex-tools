@@ -1,5 +1,6 @@
 var express = require('express');
 var passport = require('passport');
+var mongoose = require('mongoose');
 var Account = require('../models/account');
 var Alert = require('../models/alert');
 var TriggeredAlert = require('../models/triggeredAlert');
@@ -22,7 +23,7 @@ router.get('/register', function(req, res) {
 });
 
 router.post('/register', function(req, res, next) {
-    Account.register(new Account({ username : req.body.username.toLowerCase() }), req.body.password, function(err, account) {
+    Account.register(new Account({ username : req.body.username.toLowerCase(), _id: mongoose.Types.ObjectId() }), req.body.password, function(err, account) {
         if (err) {
           return res.render('register', { error : err.message });
         }
