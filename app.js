@@ -93,7 +93,7 @@ var TriggeredAlert = require('./models/triggeredAlert');
 var marketToLast = {};
 
 function checkValues() {
-    app.locals.lastChecked = Date();
+    app.locals.lastChecked = (new Date()).toISOString();
     console.log('Checking alerts')
     bittrex.getmarketsummaries((data,err) => {
         marketToLast = {};
