@@ -1,25 +1,23 @@
 // dependencies
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env['SENDGRID_API_KEY']);
-
+const push = require('pushover-notifications');
 const bittrex = require('node-bittrex-api');
+const routes = require('./routes/index');
+const users = require('./routes/users');
+const alerts = require('./routes/alerts');
+const mongooseConnectionString = process.env['DATABASE_STRING'];
+const app = express();
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var alerts = require('./routes/alerts');
-
-var mongooseConnectionString = process.env['DATABASE_STRING'];
-
-var app = express();
+sgMail.setApiKey(process.env['SENDGRID_API_KEY']);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -92,12 +90,13 @@ setInterval(checkValues, 30000);
 
 var Alert = require('./models/alert');
 var TriggeredAlert = require('./models/triggeredAlert');
+var marketToLast = {};
 
 function checkValues() {
     app.locals.lastChecked = Date();
     console.log('Checking alerts')
     bittrex.getmarketsummaries((data,err) => {
-        var marketToLast = {};
+        marketToLast = {};
         data.result.map((a) => { marketToLast[a.MarketName] = a.Last });
         Alert.find((err, alerts) => {
             for (var i in alerts) {
@@ -125,20 +124,44 @@ function triggerAlert(alert) {
 
     alert.populate('user', (err, a) => {
         if (a.user.email) {
-            emailUserAlert(alert);
+            sendEmailAlert(a);
+        }
+        if (a.user.pushoverUser && a.user.pushoverToken) {
+            sendPushoverAlert(a);
         }
     })
 }
 
-function emailUserAlert(alert) {
+function sendEmailAlert(alert) {
     const msg = {
       to: alert.user.email,
       from: "noreply@alert.stasmo.wtf",
       subject: "Bittrex Alert - " + alert.name,
-      text: `The currency ${ alert.currencyName } has reached the threshold of ${ alert.thresholdType } ${ alert.threshold } at ${ Date() }.`,
-      html: `The currency ${ alert.currencyName } has reached the threshold of ${ alert.thresholdType } ${ alert.threshold } at ${ Date() }.`,
+      text: `The currency ${ alert.currencyName } has reached the threshold of ${ alert.thresholdType } ${ alert.threshold } at ${ marketToLast[alert.currencyName] } on ${ Date() }.`,
+      html: `The currency ${ alert.currencyName } has reached the threshold of ${ alert.thresholdType } ${ alert.threshold } at ${ marketToLast[alert.currencyName] } on ${ Date() }.`,
     };
     sgMail.send(msg);
+}
+
+function sendPushoverAlert(alert) {
+    if (!alert.user.pushoverClient) {
+        alert.user.pushoverClient = new push( {
+          user: alert.user.pushoverUser,
+          token: alert.user.pushoverToken
+        });
+    }
+    const msg = {
+        message: `Your ${ alert.currencyName } alert at stasmo.wtf has triggered. ${ alert.currencyName } ${ alert.thresholdType } ${ alert.threshold} at ${ marketToLast[alert.currencyName] }`,
+        title: `${ alert.currencyName } ${ alert.thresholdType } ${ alert.threshold}`,
+        sound: 'cashregister',
+        priority: 1
+    };
+    alert.user.pushoverClient.send( msg, function( err, result ) {
+        if ( err ) {
+            console.log('Error while sending message')
+            console.error(err);
+        }
+    });
 }
 
 

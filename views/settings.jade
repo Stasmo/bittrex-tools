@@ -8,14 +8,14 @@ block content
       br
       p I don't encrypt anything. It's all stored as plain text. Just FYI.
       form(method='post' action='/settings')
-        .form-group
-          label(for='bittrexKey') Bittrex API Key
-          input#bittrexKey.form-control(type='text', placeholder='Bittrex API Key', name='bittrexKey', value=user.bittrexKey)
-          small#emailHelp.form-text.text-muted This should have READ access ONLY.
-        .form-group
-          label(for='bittrexSecret') Bittrex API Secret
-          input#bittrexSecret.form-control(type='password', placeholder='Bittrex API Secret', name='bittrexSecret', value=user.bittrexSecret)
-          small#emailHelp.form-text.text-muted This should have READ access ONLY.
+        //- .form-group
+        //-   label(for='bittrexKey') Bittrex API Key
+        //-   input#bittrexKey.form-control(type='text', placeholder='Bittrex API Key', name='bittrexKey', value=user.bittrexKey)
+        //-   small#emailHelp.form-text.text-muted This should have READ access ONLY.
+        //- .form-group
+        //-   label(for='bittrexSecret') Bittrex API Secret
+        //-   input#bittrexSecret.form-control(type='password', placeholder='Bittrex API Secret', name='bittrexSecret', value=user.bittrexSecret)
+        //-   small#emailHelp.form-text.text-muted This should have READ access ONLY.
         .form-group
           label(for='email') Email address
           input#email.form-control(type='email', placeholder='Email address', name='email', value=user.email)

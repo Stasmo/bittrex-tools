@@ -24,6 +24,7 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.4.0",
+    "pushover-notifications": "^0.2.4",
     "sendgrid": "^5.2.3",
     "serve-favicon": "~2.4.5",
     "should": "^13.1.3"
