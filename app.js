@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env['SENDGRID_API_KEY']);
 
 const bittrex = require('node-bittrex-api');
 
@@ -109,8 +111,6 @@ function checkValues() {
 }
 
 function triggerAlert(alert) {
-    console.log('Alert triggered')
-    console.log(alert);
     var triggeredAlert = new TriggeredAlert({
         name: alert.name,
         user: alert.user,
@@ -121,8 +121,26 @@ function triggerAlert(alert) {
     });
     triggeredAlert.save(() => {
         alert.remove();
+    });
+
+    alert.populate('user', (err, a) => {
+        if (a.user.email) {
+            emailUserAlert(alert);
+        }
     })
 }
+
+function emailUserAlert(alert) {
+    const msg = {
+      to: alert.user.email,
+      from: "noreply@alert.stasmo.wtf",
+      subject: "Bittrex Alert - " + alert.name,
+      text: `The currency ${ alert.currencyName } has reached the threshold of ${ alert.thresholdType } ${ alert.threshold } at ${ Date() }.`,
+      html: `The currency ${ alert.currencyName } has reached the threshold of ${ alert.thresholdType } ${ alert.threshold } at ${ Date() }.`,
+    };
+    sgMail.send(msg);
+}
+
 
 checkValues();
 
