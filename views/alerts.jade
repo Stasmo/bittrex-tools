@@ -29,7 +29,7 @@ block content
             .card-body
               h4.card-title #{ alert.name }
               h6.card-subtitle.mb-2.text-muted Currency: #{ alert.currencyName }
-              p.card-text
-                | Threshold: #{ alert.threshold } triggered on #{ alert.triggeredOn }
+              p.card-text Threshold: #{ alert.threshold } triggered at 
+                span.moment= alert.triggeredOn
       else
         p No triggered alerts

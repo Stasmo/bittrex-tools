@@ -63,14 +63,19 @@ router.get('/settings', function(req, res) {
 
 router.post('/settings', function(req, res) {
     if (!req.isAuthenticated()) return res.redirect('/login');
+    if (req.body.email == '' || req.body.email != req.user.email) req.user.emailVerified = false;
     req.user.email = req.body.email;
+    if (!req.user.emailVerified && req.user.email != '') app.sendVerificationEmail(user);
     req.user.bittrexKey = req.body.bittrexKey;
     req.user.bittrexSecret = req.body.bittrexSecret;
     req.user.pushoverUser = req.body.pushoverUser;
     req.user.pushoverToken = req.body.pushoverToken;
+    if (req.body.phoneNumber == '' || req.body.phoneNumber != req.user.phoneNumber) req.user.phoneNumberVerified = false;
+    req.user.phoneNumber = req.body.phoneNumber;
     req.user.save();
     res.redirect('/');
 });
+
 
 router.get('/alerts/new', function(req, res) {
     if (!req.isAuthenticated()) res.redirect('/login');

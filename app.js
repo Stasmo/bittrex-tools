@@ -16,6 +16,12 @@ const users = require('./routes/users');
 const alerts = require('./routes/alerts');
 const mongooseConnectionString = process.env['DATABASE_STRING'];
 const app = express();
+const twilio = require('twilio');
+const twilioAccountSid = 'AC8abeab0b34467215323ee917650901c5';
+const twilioFromNumber = '+61438065979';
+const twilioAuthToken = process.env['TWILIO_AUTH_TOKEN'];
+const twilioClient = require('twilio')(twilioAccountSid, twilioAuthToken);
+const randomstring = require('randomstring');
 
 sgMail.setApiKey(process.env['SENDGRID_API_KEY']);
 
@@ -119,17 +125,19 @@ function triggerAlert(alert) {
         thresholdType: alert.thresholdType
     });
     triggeredAlert.save(() => {
-        alert.remove();
+        alert.populate('user', (err, a) => {
+            if (a.user.email) {
+                sendEmailAlert(a);
+            }
+            if (a.user.pushoverUser && a.user.pushoverToken) {
+                sendPushoverAlert(a);
+            }
+            if (a.user.phoneNumber) {
+                sendSMSAlert(a);
+            }
+            a.remove();
+        });
     });
-
-    alert.populate('user', (err, a) => {
-        if (a.user.email) {
-            sendEmailAlert(a);
-        }
-        if (a.user.pushoverUser && a.user.pushoverToken) {
-            sendPushoverAlert(a);
-        }
-    })
 }
 
 function sendEmailAlert(alert) {
@@ -164,11 +172,30 @@ function sendPushoverAlert(alert) {
     });
 }
 
+function sendSMSAlert(alert) {
+    twilioClient.messages.create({
+        to: alert.user.phoneNumber,
+        from: twilioFromNumber,
+        body: `Your ${ alert.currencyName } alert at stasmo.wtf has triggered. ${ alert.currencyName } ${ alert.thresholdType } ${ alert.threshold} at ${ marketToLast[alert.currencyName] }`,
+    }, function(err, message) {
+        console.log(err)
+        console.log(message);
+    });
+}
+
 
 checkValues();
 
 app.getMarketTicker = function(marketName, callback) {
     bittrex.getticker({market: marketName}, callback);
+}
+
+app.sendEmail = function(message) {
+    return sgMail.send(message);
+}
+
+app.sendText = function(message) {
+    return new Promise(twilioClient.messages.create(message));
 }
 
 bittrex.getmarketsummaries((data,err) => {

@@ -9,9 +9,14 @@ var Account = new Schema({
     bittrexKey: String,
     bittrexSecret: String,
     email: String,
+    emailVerified: Boolean,
+    emailVerificationToken: String,
     pushoverUser: String,
     pushoverToken: String,
-    alerts: [{type: Schema.Types.ObjectId, ref: 'Alert'}]
+    alerts: [{type: Schema.Types.ObjectId, ref: 'Alert'}],
+    phoneNumber: String,
+    phoneNumberVerified: Boolean,
+    phoneNumberVerificationCode: Number
 });
 
 Account.plugin(passportLocalMongoose);

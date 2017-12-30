@@ -6,7 +6,6 @@ block content
       br
       h1 Settings
       br
-      p I don't encrypt anything. It's all stored as plain text. Just FYI.
       form(method='post' action='/settings')
         //- .form-group
         //-   label(for='bittrexKey') Bittrex API Key
@@ -25,5 +24,8 @@ block content
         .form-group
           label(for='pushoverToken') Pushover token
           input#pushoverToken.form-control(type='password', placeholder='Pushover token', name='pushoverToken', value=user.pushoverToken)
+        .form-group
+          label(for='phoneNumber') Phone number
+          input#phoneNumber.form-control(type='text', placeholder='Phone number', name='phoneNumber', value=user.phoneNumber)
 
         input.btn.btn-primary(type='submit')

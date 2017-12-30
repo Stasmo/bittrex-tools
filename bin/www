@@ -26,6 +26,8 @@ if (process.env.SSL == 'true') {
   };
   app.set('port', 80);
   app.listen(80);
+  var httpsRedirect = require('express-https-redirect');
+  app.use('/', httpsRedirect());
   var server = https.createServer(options, app);
   server.listen(443);
 } else {
