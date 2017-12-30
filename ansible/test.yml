@@ -1,10 +1,6 @@
-# Ansible playbook
-- name: Set up the containers
-  hosts: stasmo.wtf
+- name: test
+  hosts: localhost
   vars:
-    app_port: 80
-    mongo_db: bittrextoolsdb
-    mongo_user: stasmo
     mongo_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           38633866386333383035363731343362336662643233323138383735383136313761373131396330
@@ -30,39 +26,6 @@
           6666326461373237340a346162383837333038643036383364306263376261616635656137623731
           66613833343732303336636136623764643238626431653432366631343139663335666364643566
           3931326239653635666339393138373866306366396230343630
-    certbot_install_from_source: yes
-  roles:
-    - role: geerlingguy.certbot
-      become: yes
   tasks:
-    - docker_container:
-        name: server
-        state: absent
-    - shell: letsencrypt certonly --agree-tos --email simon@staszkiewicz.ca --noninteractive --standalone -d stasmo.wtf
-      become: yes
-    - docker_container:
-        restart_policy: always
-        image: mongo
-        name: bittrex_mongo
-        volumes:
-          - "{{ ansible_user_dir}}/mongodata:/data/db"
-    - docker_container:
-        pull: yes
-        restart_policy: always
-        image: stasmo/bittrex-tools
-        name: server
-        volumes:
-          - /etc/letsencrypt:/certs
-        ports:
-          - "80:80"
-          - "443:443"
-        links:
-          - bittrex_mongo:mongo
-        env:
-          DATABASE_STRING: 'mongodb://mongo/bittrex_tools'
-          PORT: "{{ app_port }}"
-          SSL: 'true'
-          CERTS_DIR: /certs/live/stasmo.wtf/
-          SENDGRID_API_KEY: "{{ sendgrid_api_key }}"
-          TWILIO_AUTH_TOKEN: "{{ twilio_auth_token }}"
-        command: npm start
+    - name: Echothe vars
+      debug: var=sendgrid_api_key
